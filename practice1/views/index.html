@@ -5,8 +5,53 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        li{
+            list-style: none;
+        }
+    </style>
 </head>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded',_=>{
+        const webSocket = new WebSocket('ws://localhost:3001')
+        webSocket.onopen = _=>{
+            console.log('웹소켓 connection 성공 / (handshake)')
+        }
+        webSocket.onclose = _=>{
+            console.log('웹소켓 disconnection')
+        }
+        const form = document.querySelector('form')
+        form.addEventListener('submit',(e)=>{
+            e.preventDefault()
+            const {input} = e.target
+            let data = {
+                type: 'send_msg',
+                data:{
+                    userid: 'yellow-w',
+                    msg:input.value
+                }
+            }
+            webSocket.send(JSON.stringify(data))    //스트링으로 변환해서 보기
+            input.value=''
+            input.focus()
+        })
+        webSocket.onmessage = (event) =>{
+            console.log(event.data)
+            const chat = document.querySelector('#chat')
+            const liElement = document.createElement('li')
+            liElement.innerHTML = JSON.parse(event.data).msg    //객체로 변환
+            chat.appendChild(liElement)
+            console.log(event.data)
+        }
+    })
+</script>
 <body>
-    보임?
+    <form action="/" method="get">
+        <input type="text" name="input" id="input">
+        <input type="submit" value="전송">
+    </form>
+    <ul id ="chat">
+
+    </ul>
 </body>
 </html>

@@ -5,6 +5,7 @@ require('dotenv').config()
 const router = require('./routes/index')
 // const port = process.env.PORT
 // console.log(port)
+const webSocket = require('./socket')
 
 app.set('view engine','html')
 nunjucks.configure('views',{
@@ -17,6 +18,6 @@ app.use(express.urlencoded({extended:true}))
 
 app.use(router)
 
-app.listen(3001,_=>{
+webSocket(app.listen(3001,_=>{
     console.log(`server running on localhost 3001`)
-})
+}))
